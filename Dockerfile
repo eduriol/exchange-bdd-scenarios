@@ -3,7 +3,6 @@ FROM rust:1.54
 WORKDIR /usr/src/myapp
 COPY . .
 
-RUN cargo install --path .
+RUN cargo build --tests
 
-CMD ["exchange-bdd-scenarios"]
-
+CMD ["cargo", "test"]
