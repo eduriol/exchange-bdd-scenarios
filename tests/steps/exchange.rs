@@ -20,5 +20,13 @@ pub fn steps() -> Steps<crate::MyWorld> {
         world
     });
 
+    steps.when_async(
+        "I request the XBT/USD trading pair",
+        t!(|mut world, _ctx| {
+            world.exchange.get_asset_pairs().await;
+            world
+        }),
+    );
+
     steps
 }
