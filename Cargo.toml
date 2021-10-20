@@ -10,7 +10,10 @@ name = "cucumber"
 harness = false # Allows Cucumber to print output instead of libtest
 
 [dependencies]
+chrono = "0.4"
+reqwest = { version = "0.11", features = ["json"] }
 tokio = { version = "1.2.0", features = ["rt-multi-thread", "macros", "time"] }
+serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
 cucumber_rust = "0.9"
