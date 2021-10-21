@@ -51,12 +51,12 @@ struct AssetPairsResponse {
     result: AssetPairsResult,
 }
 
-struct Exchange {
-    pub time: TimeResponse,
-    pub trading_pair: AssetPairsResponse,
+pub struct ExchangeWorld {
+    time: TimeResponse,
+    trading_pair: AssetPairsResponse,
 }
 
-impl Exchange {
+impl ExchangeWorld {
     async fn get_server_time(&mut self) {
         let request_url = format!("https://api.kraken.com/0/{scope}/{endpoint}",
                                   scope = "public",
@@ -76,50 +76,44 @@ impl Exchange {
     }
 }
 
-pub struct MyWorld {
-    exchange: Exchange,
-}
-
 #[async_trait(?Send)]
-impl World for MyWorld {
+impl World for ExchangeWorld {
     type Error = Infallible;
 
     async fn new() -> Result<Self, Infallible> {
         Ok(Self {
-          exchange: Exchange {
-              time: TimeResponse {
-                  error: vec![],
-                  result: TimeResult {
-                      unixtime: 0,
-                      rfc1123: "Thu, 1 Jan 1970 00:00:00 +0000".to_string(),
-                  },
-              },
-              trading_pair: AssetPairsResponse {
-                  error: vec![],
-                  result: AssetPairsResult {
-                      XXBTZUSD: XBTUSDPair {
-                          altname: "".to_string(),
-                          wsname: "".to_string(),
-                          aclass_base: "".to_string(),
-                          base: "".to_string(),
-                          aclass_quote: "".to_string(),
-                          quote: "".to_string(),
-                          lot: "".to_string(),
-                          pair_decimals: 0,
-                          lot_decimals: 0,
-                          lot_multiplier: 0,
-                          leverage_buy: vec![],
-                          leverage_sell: vec![],
-                          fees: vec![],
-                          fees_maker: vec![],
-                          fee_volume_currency: "".to_string(),
-                          margin_call: 0,
-                          margin_stop: 0,
-                          ordermin: "".to_string()
-                      }
-                  }
-              }
-          },
+            time: TimeResponse {
+                error: vec![],
+                result: TimeResult {
+                    unixtime: 0,
+                    rfc1123: "Thu, 1 Jan 1970 00:00:00 +0000".to_string(),
+                },
+            },
+            trading_pair: AssetPairsResponse {
+                error: vec![],
+                result: AssetPairsResult {
+                    XXBTZUSD: XBTUSDPair {
+                        altname: "".to_string(),
+                        wsname: "".to_string(),
+                        aclass_base: "".to_string(),
+                        base: "".to_string(),
+                        aclass_quote: "".to_string(),
+                        quote: "".to_string(),
+                        lot: "".to_string(),
+                        pair_decimals: 0,
+                        lot_decimals: 0,
+                        lot_multiplier: 0,
+                        leverage_buy: vec![],
+                        leverage_sell: vec![],
+                        fees: vec![],
+                        fees_maker: vec![],
+                        fee_volume_currency: "".to_string(),
+                        margin_call: 0,
+                        margin_stop: 0,
+                        ordermin: "".to_string()
+                    }
+                }
+            }
         })
     }
 }
@@ -127,7 +121,7 @@ impl World for MyWorld {
 #[tokio::main]
 async fn main() {
 
-    Cucumber::<MyWorld>::new()
+    Cucumber::<ExchangeWorld>::new()
         // Specifies where our feature files exist
         .features(&["./tests/features"])
         // Adds the implementation of our steps to the runner
