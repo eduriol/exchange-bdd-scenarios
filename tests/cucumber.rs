@@ -40,6 +40,7 @@ struct XBTUSDPair {
 }
 
 #[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
 struct AssetPairsResult {
     XXBTZUSD: XBTUSDPair,
 }

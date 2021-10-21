@@ -7,6 +7,6 @@ Feature: Get information from Exchange API
     When I request the server time
     Then I get a proper server time
 
-  Scenario: I can get the bitcoin value in dollars
+  Scenario: I can get the bitcoin and dollar trading info
     When I request the XBT/USD trading pair
-    Then I get a proper trading value
+    Then I get proper trading pair info

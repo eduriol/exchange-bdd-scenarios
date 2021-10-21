@@ -28,5 +28,10 @@ pub fn steps() -> Steps<crate::MyWorld> {
         }),
     );
 
+    steps.then("I get proper trading pair info", |world, _ctx| {
+        assert_eq!(world.exchange.trading_pair.result.XXBTZUSD.altname, "XBTUSD");
+        world
+    });
+
     steps
 }
