@@ -1,9 +1,9 @@
+use crate::domain::OrderSet;
 use chrono::{DateTime, Utc};
 use cucumber_rust::{t, Steps};
 use data_encoding::BASE64;
 use hmac::{Hmac, Mac, NewMac};
-use sha2::{Sha256, Sha512, Digest};
-use crate::domain::OrderSet;
+use sha2::{Digest, Sha256, Sha512};
 
 pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
     let mut steps: Steps<crate::domain::ExchangeWorld> = Steps::new();
@@ -17,8 +17,8 @@ pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
     );
 
     steps.then("I get a proper server time", |world, _ctx| {
-        let server_time = DateTime::parse_from_str(
-            &world.time.result.rfc1123, "%a, %d %b %y %T %z");
+        let server_time =
+            DateTime::parse_from_str(&world.time.result.rfc1123, "%a, %d %b %y %T %z");
         assert!(server_time.is_ok());
         assert_eq!(server_time.unwrap().timestamp(), world.time.result.unixtime);
         world
@@ -41,10 +41,15 @@ pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
         world.auth_info.one_time_password = env!("OTP").parse().unwrap();
         world.auth_info.api_key = env!("API_KEY").parse().unwrap();
         world.auth_info.api_nonce = (DateTime::timestamp(&Utc::now()) * 1000000).to_string();
-        world.auth_info.api_sign = get_api_signature("/0/private/OpenOrders".to_string(),
-                                                     "nonce=".to_owned() + &world.auth_info.api_nonce + "&otp=" + world.auth_info.one_time_password.as_str(),
-                                                     env!("API_SECRET").parse().unwrap(),
-                                                     world.auth_info.api_nonce.to_owned());
+        world.auth_info.api_sign = get_api_signature(
+            "/0/private/OpenOrders".to_string(),
+            "nonce=".to_owned()
+                + &world.auth_info.api_nonce
+                + "&otp="
+                + world.auth_info.one_time_password.as_str(),
+            env!("API_SECRET").parse().unwrap(),
+            world.auth_info.api_nonce.to_owned(),
+        );
         world
     });
 

@@ -1,6 +1,6 @@
 use cucumber_rust::{async_trait, World};
 use reqwest::Client;
-use serde::{Deserialize};
+use serde::Deserialize;
 use std::convert::Infallible;
 
 pub struct AuthInfo {
@@ -57,8 +57,7 @@ pub struct AssetPairsResponse {
 }
 
 #[derive(Deserialize, Debug, PartialEq)]
-pub struct OrderSet {
-}
+pub struct OrderSet {}
 
 #[derive(Deserialize, Debug)]
 pub struct OpenOrdersResult {
@@ -80,37 +79,49 @@ pub struct ExchangeWorld {
 
 impl ExchangeWorld {
     pub async fn get_server_time(&mut self) {
-        let request_url = format!("https://api.kraken.com/0/{scope}/{endpoint}",
-                                           scope = "public",
-                                           endpoint = "Time");
+        let request_url = format!(
+            "https://api.kraken.com/0/{scope}/{endpoint}",
+            scope = "public",
+            endpoint = "Time"
+        );
         let response = reqwest::get(&request_url).await.unwrap();
         self.time = response.json().await.unwrap();
     }
 
     pub async fn get_asset_pairs(&mut self) {
-        let request_url = format!("https://api.kraken.com/0/{scope}/{endpoint}?{param1}={value1}",
-                                           scope = "public",
-                                           endpoint = "AssetPairs",
-                                           param1 = "pair",
-                                           value1 = "XBTUSD");
+        let request_url = format!(
+            "https://api.kraken.com/0/{scope}/{endpoint}?{param1}={value1}",
+            scope = "public",
+            endpoint = "AssetPairs",
+            param1 = "pair",
+            value1 = "XBTUSD"
+        );
         let response = reqwest::get(&request_url).await.unwrap();
         self.trading_pair = response.json().await.unwrap();
     }
 
     pub async fn get_open_orders(&mut self) {
-        let request_url = format!("https://api.kraken.com/0/{scope}/{endpoint}",
-                                  scope = "private",
-                                  endpoint = "OpenOrders");
+        let request_url = format!(
+            "https://api.kraken.com/0/{scope}/{endpoint}",
+            scope = "private",
+            endpoint = "OpenOrders"
+        );
         let response = Client::new()
             .post(request_url)
             .header("API-Key", &self.auth_info.api_key)
             .header("API-Sign", &self.auth_info.api_sign)
             .header("Content-Type", "application/x-www-form-urlencoded")
-            .body("nonce=".to_string() + &self.auth_info.api_nonce + "&otp=" + &self.auth_info.one_time_password)
-            .send().await.unwrap();
+            .body(
+                "nonce=".to_string()
+                    + &self.auth_info.api_nonce
+                    + "&otp="
+                    + &self.auth_info.one_time_password,
+            )
+            .send()
+            .await
+            .unwrap();
         self.open_orders = response.json().await.unwrap();
     }
-
 }
 
 #[async_trait(?Send)]
@@ -154,15 +165,13 @@ impl World for ExchangeWorld {
                         margin_call: 0,
                         margin_stop: 0,
                         ordermin: "".to_string(),
-                    }
-                }
+                    },
+                },
             },
-            open_orders : OpenOrders {
+            open_orders: OpenOrders {
                 error: vec![],
-                result: OpenOrdersResult {
-                    open: OrderSet {},
-                }
-            }
+                result: OpenOrdersResult { open: OrderSet {} },
+            },
         })
     }
 }

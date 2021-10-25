@@ -5,7 +5,6 @@ mod steps;
 
 #[tokio::main]
 async fn main() {
-
     Cucumber::<crate::domain::ExchangeWorld>::new()
         // Specifies where our feature files exist
         .features(&["./tests/features"])
