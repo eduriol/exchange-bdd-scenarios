@@ -10,3 +10,8 @@ Feature: Get information from Exchange API
   Scenario: I can get the bitcoin and dollar trading info
     When I request the XBT/USD trading pair
     Then I get proper trading pair info
+
+  Scenario: I can get my open orders
+    Given I have a 2FA account
+    When I request the open orders
+    Then I get my list of open orders

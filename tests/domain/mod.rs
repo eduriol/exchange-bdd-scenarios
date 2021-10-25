@@ -1,7 +1,14 @@
 use cucumber_rust::{async_trait, World};
-use reqwest;
+use reqwest::Client;
 use serde::{Deserialize};
 use std::convert::Infallible;
+
+pub struct AuthInfo {
+    pub api_nonce: String,
+    pub one_time_password: String,
+    pub api_key: String,
+    pub api_sign: String,
+}
 
 #[derive(Deserialize, Debug)]
 pub struct TimeResult {
@@ -49,9 +56,26 @@ pub struct AssetPairsResponse {
     pub result: AssetPairsResult,
 }
 
+#[derive(Deserialize, Debug, PartialEq)]
+pub struct OrderSet {
+}
+
+#[derive(Deserialize, Debug)]
+pub struct OpenOrdersResult {
+    pub open: OrderSet,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct OpenOrders {
+    pub error: Vec<String>,
+    pub result: OpenOrdersResult,
+}
+
 pub struct ExchangeWorld {
+    pub auth_info: AuthInfo,
     pub time: TimeResponse,
     pub trading_pair: AssetPairsResponse,
+    pub open_orders: OpenOrders,
 }
 
 impl ExchangeWorld {
@@ -72,6 +96,21 @@ impl ExchangeWorld {
         let response = reqwest::get(&request_url).await.unwrap();
         self.trading_pair = response.json().await.unwrap();
     }
+
+    pub async fn get_open_orders(&mut self) {
+        let request_url = format!("https://api.kraken.com/0/{scope}/{endpoint}",
+                                  scope = "private",
+                                  endpoint = "OpenOrders");
+        let response = Client::new()
+            .post(request_url)
+            .header("API-Key", &self.auth_info.api_key)
+            .header("API-Sign", &self.auth_info.api_sign)
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .body("nonce=".to_string() + &self.auth_info.api_nonce + "&otp=" + &self.auth_info.one_time_password)
+            .send().await.unwrap();
+        self.open_orders = response.json().await.unwrap();
+    }
+
 }
 
 #[async_trait(?Send)]
@@ -80,6 +119,12 @@ impl World for ExchangeWorld {
 
     async fn new() -> Result<Self, Infallible> {
         Ok(Self {
+            auth_info: AuthInfo {
+                api_nonce: "".to_string(),
+                one_time_password: "".to_string(),
+                api_key: "".to_string(),
+                api_sign: "".to_string(),
+            },
             time: TimeResponse {
                 error: vec![],
                 result: TimeResult {
@@ -108,8 +153,14 @@ impl World for ExchangeWorld {
                         fee_volume_currency: "".to_string(),
                         margin_call: 0,
                         margin_stop: 0,
-                        ordermin: "".to_string()
+                        ordermin: "".to_string(),
                     }
+                }
+            },
+            open_orders : OpenOrders {
+                error: vec![],
+                result: OpenOrdersResult {
+                    open: OrderSet {},
                 }
             }
         })
