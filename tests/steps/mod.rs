@@ -55,7 +55,7 @@ pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
     steps.then_regex_async(
         r#"^I get proper ticker "(.*)" info$"#,
         t!(|world, _ctx| {
-            // Check that the "a" vec first position is greater than 0 dollars
+            // Check that the "a" vec first position is greater than 0
             assert!(
             world
                 .ticker
