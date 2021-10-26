@@ -7,13 +7,13 @@ Feature: Get information from Exchange API
     When I request the server time
     Then I get a proper server time
 
-  Scenario: I can get the bitcoin and dollar trading info
+  Scenario: I can get a pair trading info
     When I request the "XBTUSD" trading pair
-    Then I get proper trading pair info
+    Then I get proper trading "XBTUSD" info
 
-  Scenario: I can get the bitcoin and dollar ticker
+  Scenario: I can get a pair ticker
     When I request the "XBTUSD" ticker
-    Then I get proper ticker info
+    Then I get proper ticker "XBTUSD" info
 
     # Since I don't currently have open orders, I request the list,
     # validate the response format and check that the list is an empty object

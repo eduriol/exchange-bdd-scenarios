@@ -35,11 +35,14 @@ pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
         }),
     );
 
-    steps.then("I get proper trading pair info", |world, _ctx| {
-        // Check that the altname is the expected one to validate trading pair info
-        assert_eq!(world.trading_pair.result.XXBTZUSD.altname, "XBTUSD");
-        world
-    });
+    steps.then_regex_async(
+        r#"^I get proper trading "(.*)" info$"#,
+        t!(|world, ctx| {
+            // Check that the altname is the expected one to validate trading pair info
+            assert_eq!(world.trading_pair.result.XXBTZUSD.altname, ctx.matches[1]);
+            world
+        }),
+    );
 
     steps.when_regex_async(
         r#"^I request the "(.*)" ticker$"#,
@@ -49,9 +52,11 @@ pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
         }),
     );
 
-    steps.then("I get proper ticker info", |world, _ctx| {
-        // Check that the "a" vec first position is greater than 0 dollars
-        assert!(
+    steps.then_regex_async(
+        r#"^I get proper ticker "(.*)" info$"#,
+        t!(|world, _ctx| {
+            // Check that the "a" vec first position is greater than 0 dollars
+            assert!(
             world
                 .ticker
                 .result
@@ -62,9 +67,10 @@ pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
                 .parse::<f32>()
                 .unwrap()
                 > 0.0
-        );
-        world
-    });
+            );
+            world
+        }),
+    );
 
     steps.given("I have a 2FA account", |mut world, _ctx| {
         // Set all the values required to later perform the authenticated request
