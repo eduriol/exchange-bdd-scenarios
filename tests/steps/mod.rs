@@ -4,6 +4,7 @@ use cucumber_rust::{t, Steps};
 use data_encoding::BASE64;
 use hmac::{Hmac, Mac, NewMac};
 use sha2::{Digest, Sha256, Sha512};
+use std::env;
 
 pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
     let mut steps: Steps<crate::domain::ExchangeWorld> = Steps::new();
@@ -38,8 +39,8 @@ pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
     });
 
     steps.given("I have a 2FA account", |mut world, _ctx| {
-        world.auth_info.one_time_password = env!("OTP").parse().unwrap();
-        world.auth_info.api_key = env!("API_KEY").parse().unwrap();
+        world.auth_info.one_time_password = env::var("OTP").unwrap();
+        world.auth_info.api_key = env::var("API_KEY").unwrap();
         world.auth_info.api_nonce = (DateTime::timestamp(&Utc::now()) * 1000000).to_string();
         world.auth_info.api_sign = get_api_signature(
             "/0/private/OpenOrders".to_string(),
@@ -47,7 +48,7 @@ pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
                 + &world.auth_info.api_nonce
                 + "&otp="
                 + world.auth_info.one_time_password.as_str(),
-            env!("API_SECRET").parse().unwrap(),
+            env::var("API_SECRET").unwrap(),
             world.auth_info.api_nonce.to_owned(),
         );
         world
