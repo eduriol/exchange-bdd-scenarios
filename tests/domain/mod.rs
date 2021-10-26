@@ -78,6 +78,7 @@ pub struct ExchangeWorld {
 }
 
 impl ExchangeWorld {
+    /// Requests server time from /0/public/Time
     pub async fn get_server_time(&mut self) {
         let request_url = format!(
             "https://api.kraken.com/0/{scope}/{endpoint}",
@@ -88,6 +89,7 @@ impl ExchangeWorld {
         self.time = response.json().await.unwrap();
     }
 
+    /// Requests trading pair info from /0/public/AssetPairs
     pub async fn get_asset_pairs(&mut self) {
         let request_url = format!(
             "https://api.kraken.com/0/{scope}/{endpoint}?{param1}={value1}",
@@ -100,6 +102,7 @@ impl ExchangeWorld {
         self.trading_pair = response.json().await.unwrap();
     }
 
+    /// Requests list of open orders of an authenticated user from /0/private/OpenOrders
     pub async fn get_open_orders(&mut self) {
         let request_url = format!(
             "https://api.kraken.com/0/{scope}/{endpoint}",
@@ -128,6 +131,7 @@ impl ExchangeWorld {
 impl World for ExchangeWorld {
     type Error = Infallible;
 
+    /// Sets initial value for the World under test
     async fn new() -> Result<Self, Infallible> {
         Ok(Self {
             auth_info: AuthInfo {

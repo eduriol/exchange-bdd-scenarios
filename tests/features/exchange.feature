@@ -11,6 +11,8 @@ Feature: Get information from Exchange API
     When I request the XBT/USD trading pair
     Then I get proper trading pair info
 
+    # Since I don't currently have open orders, I request the list,
+    # validate the response format and check that the list is an empty object
   Scenario: I can get my open orders
     Given I have a 2FA account
     When I request the open orders
