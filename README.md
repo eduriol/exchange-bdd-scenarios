@@ -32,6 +32,8 @@ docker run --env OTP=<One Time Password> --env API_KEY=<API_KEY> --env API_SECRE
 ### Reports
 The report showing the result of the scenarios execution can be seen in the standard output:
 
+<img width="620" alt="Screenshot 2021-10-26 at 15 13 09" src="https://user-images.githubusercontent.com/5454201/138886083-b8c483af-77d6-44de-b788-0433ec0c137b.png">
+
 ### Contribution
 If you'd like to contribute to the project, please send a [Pull Request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) or contact eduriol [at] gmail.com.
 #### Code quality
