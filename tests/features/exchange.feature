@@ -11,6 +11,10 @@ Feature: Get information from Exchange API
     When I request the XBT/USD trading pair
     Then I get proper trading pair info
 
+  Scenario: I can get the bitcoin and dollar ticker
+    When I request the XBT/USD ticker
+    Then I get proper ticker info
+
     # Since I don't currently have open orders, I request the list,
     # validate the response format and check that the list is an empty object
   Scenario: I can get my open orders

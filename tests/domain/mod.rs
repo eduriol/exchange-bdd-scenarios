@@ -56,6 +56,31 @@ pub struct AssetPairsResponse {
     pub result: AssetPairsResult,
 }
 
+#[derive(Deserialize, Debug)]
+pub struct XBTUSDTicker {
+    pub a: Vec<String>,
+    b: Vec<String>,
+    c: Vec<String>,
+    v: Vec<String>,
+    p: Vec<String>,
+    t: Vec<u32>,
+    l: Vec<String>,
+    h: Vec<String>,
+    o: String,
+}
+
+#[derive(Deserialize, Debug)]
+#[allow(non_snake_case)]
+pub struct TickerResult {
+    pub XXBTZUSD: XBTUSDTicker,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct TickerResponse {
+    error: Vec<String>,
+    pub result: TickerResult,
+}
+
 #[derive(Deserialize, Debug, PartialEq)]
 pub struct OrderSet {}
 
@@ -74,6 +99,7 @@ pub struct ExchangeWorld {
     pub auth_info: AuthInfo,
     pub time: TimeResponse,
     pub trading_pair: AssetPairsResponse,
+    pub ticker: TickerResponse,
     pub open_orders: OpenOrders,
 }
 
@@ -100,6 +126,19 @@ impl ExchangeWorld {
         );
         let response = reqwest::get(&request_url).await.unwrap();
         self.trading_pair = response.json().await.unwrap();
+    }
+
+    /// Requests ticker info from /0/public/Ticker
+    pub async fn get_ticker(&mut self) {
+        let request_url = format!(
+            "https://api.kraken.com/0/{scope}/{endpoint}?{param1}={value1}",
+            scope = "public",
+            endpoint = "Ticker",
+            param1 = "pair",
+            value1 = "XBTUSD"
+        );
+        let response = reqwest::get(&request_url).await.unwrap();
+        self.ticker = response.json().await.unwrap();
     }
 
     /// Requests list of open orders of an authenticated user from /0/private/OpenOrders
@@ -169,6 +208,22 @@ impl World for ExchangeWorld {
                         margin_call: 0,
                         margin_stop: 0,
                         ordermin: "".to_string(),
+                    },
+                },
+            },
+            ticker: TickerResponse {
+                error: vec![],
+                result: TickerResult {
+                    XXBTZUSD: XBTUSDTicker {
+                        a: vec![],
+                        b: vec![],
+                        c: vec![],
+                        v: vec![],
+                        p: vec![],
+                        t: vec![],
+                        l: vec![],
+                        h: vec![],
+                        o: "".to_string(),
                     },
                 },
             },

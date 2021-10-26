@@ -41,6 +41,31 @@ pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
         world
     });
 
+    steps.when_async(
+        "I request the XBT/USD ticker",
+        t!(|mut world, _ctx| {
+            world.get_ticker().await;
+            world
+        }),
+    );
+
+    steps.then("I get proper ticker info", |world, _ctx| {
+        // Check that the "a" vec first position is greater than 0 dollars
+        assert!(
+            world
+                .ticker
+                .result
+                .XXBTZUSD
+                .a
+                .get(0)
+                .unwrap()
+                .parse::<f32>()
+                .unwrap()
+                > 0.0
+        );
+        world
+    });
+
     steps.given("I have a 2FA account", |mut world, _ctx| {
         // Set all the values required to later perform the authenticated request
         world.auth_info.one_time_password = env::var("OTP").unwrap();
