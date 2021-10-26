@@ -8,11 +8,11 @@ Feature: Get information from Exchange API
     Then I get a proper server time
 
   Scenario: I can get the bitcoin and dollar trading info
-    When I request the XBT/USD trading pair
+    When I request the "XBTUSD" trading pair
     Then I get proper trading pair info
 
   Scenario: I can get the bitcoin and dollar ticker
-    When I request the XBT/USD ticker
+    When I request the "XBTUSD" ticker
     Then I get proper ticker info
 
     # Since I don't currently have open orders, I request the list,

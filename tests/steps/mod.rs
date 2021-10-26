@@ -27,10 +27,10 @@ pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
         world
     });
 
-    steps.when_async(
-        "I request the XBT/USD trading pair",
-        t!(|mut world, _ctx| {
-            world.get_asset_pairs().await;
+    steps.when_regex_async(
+        r#"^I request the "(.*)" trading pair$"#,
+        t!(|mut world, ctx| {
+            world.get_asset_pairs(ctx.matches[1].as_str()).await;
             world
         }),
     );
@@ -41,10 +41,10 @@ pub fn steps() -> Steps<crate::domain::ExchangeWorld> {
         world
     });
 
-    steps.when_async(
-        "I request the XBT/USD ticker",
-        t!(|mut world, _ctx| {
-            world.get_ticker().await;
+    steps.when_regex_async(
+        r#"^I request the "(.*)" ticker$"#,
+        t!(|mut world, ctx| {
+            world.get_ticker(ctx.matches[1].as_str()).await;
             world
         }),
     );

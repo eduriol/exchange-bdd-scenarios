@@ -116,26 +116,26 @@ impl ExchangeWorld {
     }
 
     /// Requests trading pair info from /0/public/AssetPairs
-    pub async fn get_asset_pairs(&mut self) {
+    pub async fn get_asset_pairs(&mut self, value: &str) {
         let request_url = format!(
             "https://api.kraken.com/0/{scope}/{endpoint}?{param1}={value1}",
             scope = "public",
             endpoint = "AssetPairs",
             param1 = "pair",
-            value1 = "XBTUSD"
+            value1 = value,
         );
         let response = reqwest::get(&request_url).await.unwrap();
         self.trading_pair = response.json().await.unwrap();
     }
 
     /// Requests ticker info from /0/public/Ticker
-    pub async fn get_ticker(&mut self) {
+    pub async fn get_ticker(&mut self, value: &str) {
         let request_url = format!(
             "https://api.kraken.com/0/{scope}/{endpoint}?{param1}={value1}",
             scope = "public",
             endpoint = "Ticker",
             param1 = "pair",
-            value1 = "XBTUSD"
+            value1 = value,
         );
         let response = reqwest::get(&request_url).await.unwrap();
         self.ticker = response.json().await.unwrap();
